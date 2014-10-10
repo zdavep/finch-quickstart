@@ -3,7 +3,6 @@ package zdavep
 import io.finch._
 import io.finch.json._
 import io.finch.request._
-import io.finch.response._
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.Method
@@ -14,8 +13,6 @@ import com.twitter.finagle.http.{Http, RichHttp}
 import java.net.InetSocketAddress
 
 object Hello extends App {
-
-  val version = "0.1"
 
   def hello(name: String) = new Service[HttpRequest, JsonResponse] {
     def apply(req: HttpRequest) = for {
