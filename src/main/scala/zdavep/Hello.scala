@@ -29,7 +29,7 @@ object Hello extends App {
     }
   }
 
-  val backend = endpoint ! TurnJsonIntoHttp
+  val backend = (endpoint ! TurnJsonIntoHttp) orElse Endpoint.NotFound
 
   ServerBuilder().codec(RichHttp[HttpRequest](Http())).bindTo(new InetSocketAddress(8080))
     .name("finch-quickstart").build(backend.toService)
