@@ -14,6 +14,8 @@ import java.net.InetSocketAddress
 
 object Hello extends App {
 
+  val version = "0.1"
+
   def hello(name: String) = new Service[HttpRequest, JsonResponse] {
     def apply(req: HttpRequest) = for {
       title <- OptionalParam("title")(req)
@@ -24,8 +26,8 @@ object Hello extends App {
 
   val endpoint = new Endpoint[HttpRequest, JsonResponse] {
     def route = {
-      case Method.Get -> Root / "hello" / version / "greeting" / name => hello(name)
-      case Method.Get -> Root / "hello" / version / "greeting"  => hello("World")
+      case Method.Get -> Root / "hello" / `version` / "greeting" / name => hello(name)
+      case Method.Get -> Root / "hello" / `version` / "greeting"  => hello("World")
     }
   }
 
