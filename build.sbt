@@ -1,3 +1,5 @@
+import AssemblyKeys._
+
 name := """finch-quickstart"""
 
 version := "0.1"
@@ -18,3 +20,5 @@ libraryDependencies ++= Seq(
 )
 
 mainClass in Global := Some("zdavep.Hello")
+
+assemblySettings
