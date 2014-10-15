@@ -3,35 +3,40 @@ package zdavep
 import io.finch._
 import io.finch.json._
 import io.finch.request._
-
-import com.twitter.finagle.Service
-import com.twitter.finagle.http.Method
-import com.twitter.finagle.http.path._
-import com.twitter.finagle.builder.ServerBuilder
-import com.twitter.finagle.http.{Http, RichHttp}
+import io.finch.response._
 
 import java.net.InetSocketAddress
 
+import com.twitter.finagle.builder.ServerBuilder
+import com.twitter.finagle.http.{Http, RichHttp, Status, Method}
+import com.twitter.finagle.http.path._
+import com.twitter.finagle.Service
+
 object Hello extends App {
 
-  val version = "0.1"
+  val okResponse = Respond(Status.Ok).withHeaders(
+    "X-Content-Type-Options" -> "nosniff", "X-Frame-Options" -> "deny",
+    "X-XSS-Protection" -> "1; mode=block",
+    "Strict-Transport-Security" -> "max-age=16070400; includeSubDomains"
+  )
 
-  def hello(name: String) = new Service[HttpRequest, JsonResponse] {
+  def hello(name: String) = new Service[HttpRequest, HttpResponse] {
     def apply(req: HttpRequest) = for {
       title <- OptionalParam("title")(req)
-    } yield JsonObject(
-      "status" -> "success", "data" -> s"Hello, ${title.getOrElse("")}$name!"
-    )
-  }
-
-  val endpoint = new Endpoint[HttpRequest, JsonResponse] {
-    def route = {
-      case Method.Get -> Root / "hello" / `version` / "greeting" / name => hello(name)
-      case Method.Get -> Root / "hello" / `version` / "greeting"  => hello("World")
+    } yield {
+      okResponse(
+        JsonObject("status" -> "success", "data" -> s"Hello, ${title.getOrElse("")}$name!"))
     }
   }
 
-  val backend = (endpoint ! TurnJsonIntoHttp) orElse Endpoint.NotFound
+  val helloEndpoints = new Endpoint[HttpRequest, HttpResponse] {
+    def route = {
+      case Method.Get -> Root / "hello" / version / "greeting" / name => hello(name)
+      case Method.Get -> Root / "hello" / version / "greeting" => hello("World")
+    }
+  }
+
+  val backend = helloEndpoints orElse Endpoint.NotFound
 
   ServerBuilder().codec(RichHttp[HttpRequest](Http())).bindTo(new InetSocketAddress(8080))
     .name("finch-quickstart").build(backend.toService)
