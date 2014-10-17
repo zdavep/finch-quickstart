@@ -38,7 +38,9 @@ object Hello extends App {
 
   val backend = helloEndpoints orElse Endpoint.NotFound
 
-  ServerBuilder().codec(RichHttp[HttpRequest](Http())).bindTo(new InetSocketAddress(8080))
+  val port = if (args.length > 0) args(0).toInt else 8080
+
+  ServerBuilder().codec(RichHttp[HttpRequest](Http())).bindTo(new InetSocketAddress(port))
     .name("finch-quickstart").build(backend.toService)
 
 } // Hello
