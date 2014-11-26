@@ -14,6 +14,8 @@ import com.twitter.finagle.Service
 
 object Hello extends App {
 
+  val version = "0.2"
+
   val okResponse = Respond(Status.Ok).withHeaders(
     "X-Content-Type-Options" -> "nosniff", "X-Frame-Options" -> "deny",
     "X-XSS-Protection" -> "1; mode=block",
@@ -31,8 +33,8 @@ object Hello extends App {
 
   val helloEndpoints = new Endpoint[HttpRequest, HttpResponse] {
     def route = {
-      case Method.Get -> Root / "hello" / version / "greeting" / name => hello(name)
-      case Method.Get -> Root / "hello" / version / "greeting" => hello("World")
+      case Method.Get -> Root / "hello" / "api" / `version` / "greeting" / name => hello(name)
+      case Method.Get -> Root / "hello" / "api" / `version` / "greeting" => hello("World")
     }
   }
 
