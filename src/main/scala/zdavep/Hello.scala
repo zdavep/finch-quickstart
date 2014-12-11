@@ -2,6 +2,7 @@ package zdavep
 
 import io.finch._
 import io.finch.json._
+import io.finch.json.finch._
 import io.finch.request._
 import io.finch.response._
 
@@ -25,10 +26,9 @@ object Hello extends App {
   def hello(name: String) = new Service[HttpRequest, HttpResponse] {
     def apply(req: HttpRequest) = for {
       title <- OptionalParam("title")(req)
-    } yield {
-      okResponse(
-        JsonObject("status" -> "success", "data" -> s"Hello, ${title.getOrElse("")}$name!"))
-    }
+    } yield okResponse(
+      Json.obj("status" -> "success", "data" -> s"Hello, ${title.getOrElse("")}$name!")
+    )
   }
 
   val helloEndpoints = new Endpoint[HttpRequest, HttpResponse] {
