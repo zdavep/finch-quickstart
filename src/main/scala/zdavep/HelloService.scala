@@ -1,19 +1,16 @@
 package zdavep
 
-import io.finch._
-import io.finch.json._
+import io.finch.{ Endpoint, HttpRequest, HttpResponse }
+import io.finch.json.Json
 import io.finch.json.finch._
-import io.finch.request._
-import io.finch.response._
+import io.finch.request.OptionalParam
+import io.finch.response.Respond
 
-import java.net.InetSocketAddress
-
-import com.twitter.finagle.builder.ServerBuilder
-import com.twitter.finagle.http.{Http, RichHttp, Status, Method}
+import com.twitter.finagle.http.{ Status, Method }
 import com.twitter.finagle.http.path._
 import com.twitter.finagle.Service
 
-object Hello extends App {
+trait HelloService {
 
   val version = "0.2"
 
@@ -38,11 +35,4 @@ object Hello extends App {
     }
   }
 
-  val backend = helloEndpoints orElse Endpoint.NotFound
-
-  val port = if (args.length > 0) args(0).toInt else 8080
-
-  ServerBuilder().codec(RichHttp[HttpRequest](Http())).bindTo(new InetSocketAddress(port))
-    .name("finch-quickstart").build(backend.toService)
-
-} // Hello
+}

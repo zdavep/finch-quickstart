@@ -14,6 +14,6 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.1.6" % "test"
 )
 
-mainClass in Global := Some("zdavep.Hello")
+mainClass in Global := Some("zdavep.HelloApp")
 
 assemblySettings
