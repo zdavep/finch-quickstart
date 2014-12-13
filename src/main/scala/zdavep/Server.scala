@@ -7,9 +7,11 @@ import com.twitter.finagle.Service
 
 import io.finch.{ Endpoint, HttpRequest }
 
-object HelloApp extends App with HelloService {
+object Server extends App with GreetingService with StatusService {
 
-  val backend = helloEndpoints orElse Endpoint.NotFound
+  override val version = "0.2"
+
+  val backend = Endpoint.join(greetingEndpoints, statusEndpoints) orElse Endpoint.NotFound
 
   val port = if (args.length > 0) args(0).toInt else 8080
 

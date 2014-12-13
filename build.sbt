@@ -14,6 +14,16 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.1.6" % "test"
 )
 
-mainClass in Global := Some("zdavep.HelloApp")
+scalacOptions ++= Seq(
+  "-unchecked",
+  "-deprecation",
+  "-Xlint",
+  "-Ywarn-dead-code",
+  "-language:_",
+  "-target:jvm-1.7",
+  "-encoding", "UTF-8"
+)
+
+mainClass in Global := Some("zdavep.Server")
 
 assemblySettings
