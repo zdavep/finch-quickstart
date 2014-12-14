@@ -4,14 +4,29 @@ import com.twitter.finagle.builder.ServerBuilder
 import com.twitter.finagle.http.{ Http, RichHttp, Status, Method }
 import com.twitter.finagle.http.path._
 import com.twitter.finagle.Service
+import com.twitter.util.Future
 
-import io.finch.{ Endpoint, HttpRequest }
+import io.finch.{ Endpoint, HttpRequest, HttpResponse }
+import io.finch.json.Json
+import io.finch.json.finch._
 
 object Server extends App with GreetingService with StatusService {
 
   override val version = "0.2"
 
-  val backend = Endpoint.join(greetingEndpoints, statusEndpoints) orElse Endpoint.NotFound
+  def notFound = new Service[HttpRequest, HttpResponse] {
+    def apply(req: HttpRequest) = Future.value(
+      respondWith(Status.NotFound)(
+        Json.obj("status" -> "error", "data" -> "Endpoint not found.")
+      )
+    )
+  }
+
+  val NotFound = new Endpoint[HttpRequest, HttpResponse] {
+    def route = { case _ => notFound }
+  }
+
+  val backend = Endpoint.join(greetingEndpoints, statusEndpoints) orElse NotFound
 
   val port = if (args.length > 0) args(0).toInt else 8080
 
