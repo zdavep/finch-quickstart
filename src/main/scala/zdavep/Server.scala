@@ -10,21 +10,9 @@ import io.finch.{ Endpoint, HttpRequest, HttpResponse }
 import io.finch.json.Json
 import io.finch.json.finch._
 
-object Server extends App with GreetingService with StatusService {
+object Server extends App with GreetingService with StatusService with NotFoundResponder {
 
   override val version = "0.2"
-
-  def notFound = new Service[HttpRequest, HttpResponse] {
-    def apply(req: HttpRequest) = Future.value(
-      respondWith(Status.NotFound)(
-        Json.obj("status" -> "error", "data" -> "Endpoint not found.")
-      )
-    )
-  }
-
-  val NotFound = new Endpoint[HttpRequest, HttpResponse] {
-    def route = { case _ => notFound }
-  }
 
   val backend = Endpoint.join(greetingEndpoints, statusEndpoints) orElse NotFound
 
