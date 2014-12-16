@@ -22,6 +22,7 @@ trait StatusService extends Versioned with Responder {
   val statusEndpoints = new Endpoint[HttpRequest, HttpResponse] {
     def route = {
       case Method.Get -> Root / "z" / "api" / `version` / "status" => status
+      case Method.Head -> Root / "z" / "api" / `version` / "status" => status
     }
   }
 
