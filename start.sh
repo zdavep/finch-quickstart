@@ -2,7 +2,7 @@
 jarfile=bin/finch-quickstart-assembly-0.1.jar
 
 mkdir -p logs
-java -ea -server -Xss8m -Xms2g -Xmx2g \
+java -ea -server -Xss8m -Xmn2g -Xms6g -Xmx6g \
   -XX:+AggressiveOpts             \
   -XX:+UseParNewGC                \
   -XX:+UseConcMarkSweepGC         \
