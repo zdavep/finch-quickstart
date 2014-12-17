@@ -2,15 +2,15 @@ import AssemblyKeys._
 
 name := """finch-quickstart"""
 
-version := "0.1"
+version := "0.2"
 
 organization := "zdavep"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.4"
 
 libraryDependencies ++= Seq(
-  "com.github.finagle" %% "finch-core" % "0.2.0",
-  "com.github.finagle" %% "finch-json" % "0.2.0",
+  "com.github.finagle" %% "finch-core" % "0.3.0",
+  "com.github.finagle" %% "finch-json" % "0.3.0",
   "org.scalatest" %% "scalatest" % "2.1.6" % "test"
 )
 

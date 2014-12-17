@@ -5,8 +5,8 @@ import io.finch.json.Json
 import io.finch.json.finch._
 import io.finch.request.OptionalParam
 
-import com.twitter.finagle.http.{ Method, Status }
-import com.twitter.finagle.http.path._
+import com.twitter.finagle.httpx.{ Method, Status }
+import com.twitter.finagle.httpx.path._
 import com.twitter.finagle.Service
 
 trait StatusService extends Versioned with Responder {

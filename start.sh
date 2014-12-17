@@ -1,5 +1,5 @@
 #!/bin/bash
-jarfile=bin/finch-quickstart-assembly-0.1.jar
+jarfile=bin/finch-quickstart-assembly-0.2.jar
 
 mkdir -p logs
 java -ea -server -Xss8m -Xmn2g -Xms6g -Xmx6g \
