@@ -1,7 +1,6 @@
 package zdavep
 
 import com.twitter.finagle.Httpx
-import com.twitter.finagle.httpx.path._
 import com.twitter.util.Await
 
 import io.finch.Endpoint
@@ -14,8 +13,7 @@ object Server extends App with GreetingService with StatusService with NotFoundR
 
   val port = if (args.length > 0) args(0).toInt else 8080
 
-  // A default Finagle service builder that runs the backend.
-  val socket = new java.net.InetSocketAddress(port)
-  val server = Httpx.serve(socket, backend.toService)
+  val server = Httpx.serve(new java.net.InetSocketAddress(port), backend.toService)
   Await.ready(server)
+
 }
