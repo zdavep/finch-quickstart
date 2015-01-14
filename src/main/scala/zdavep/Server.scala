@@ -7,7 +7,7 @@ import io.finch.Endpoint
 
 object Server extends App with GreetingService with StatusService with NotFoundResponder {
 
-  override val version = "0.2"
+  override val version = "v1"
 
   val backend = Endpoint.join(greetingEndpoints, statusEndpoints) orElse NotFound
 

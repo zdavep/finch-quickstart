@@ -21,8 +21,8 @@ trait GreetingService extends Versioned with Responder {
 
   val greetingEndpoints = new Endpoint[HttpRequest, HttpResponse] {
     def route = {
-      case Method.Get -> Root / "z" / "api" / `version` / "greeting" / name => greet(name)
-      case Method.Get -> Root / "z" / "api" / `version` / "greeting" => greet("World")
+      case Method.Get -> Root / "hello" / "api" / `version` / "greeting" / name => greet(name)
+      case Method.Get -> Root / "hello" / "api" / `version` / "greeting" => greet("World")
     }
   }
 
