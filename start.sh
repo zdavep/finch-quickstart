@@ -1,5 +1,5 @@
 #!/bin/bash
-jarfile=bin/finch-quickstart-assembly-0.2.jar
+jarfile=bin/finch-quickstart-assembly-0.3.jar
 
 mkdir -p logs
 java -ea -server -Xss8m -Xmn2g -Xms6g -Xmx6g \
@@ -10,7 +10,7 @@ java -ea -server -Xss8m -Xmn2g -Xms6g -Xmx6g \
   -XX:+CMSClassUnloadingEnabled   \
   -XX:MaxPermSize=256m            \
   -XX:+DisableExplicitGC          \
-  -jar $jarfile "$@" >> logs/application.log 2>&1 &
+  -jar ${jarfile} "$@" >> logs/application.log 2>&1 &
 
 applicationPID=$!
-echo $applicationPID > logs/application.pid
+echo ${applicationPID} > logs/application.pid

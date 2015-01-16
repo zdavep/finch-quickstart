@@ -1,8 +1,6 @@
-import AssemblyKeys._
-
 name := """finch-quickstart"""
 
-version := "0.2"
+version := "0.3"
 
 organization := "zdavep"
 
@@ -24,6 +22,6 @@ scalacOptions ++= Seq(
   "-encoding", "UTF-8"
 )
 
-mainClass in Global := Some("zdavep.Server")
+mainClass in Global := Some("zdavep.Main")
 
 assemblySettings

@@ -2,14 +2,15 @@ package zdavep
 
 import com.twitter.finagle.Httpx
 import com.twitter.util.Await
-
 import io.finch.Endpoint
+import zdavep.quickstart._
 
-object Server extends App with GreetingService with StatusService with NotFoundResponder {
+object Main extends App {
 
-  override val version = "v1"
+  val version = "v1"
 
-  val backend = Endpoint.join(greetingEndpoints, statusEndpoints) orElse NotFound
+  val endpoints = Endpoint.join(greetingEndpoints(version), statusEndpoints(version))
+  val backend = endpoints orElse EndpointNotFound
 
   val port = if (args.length > 0) args(0).toInt else 8080
 
