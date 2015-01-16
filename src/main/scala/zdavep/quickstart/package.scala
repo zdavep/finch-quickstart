@@ -78,7 +78,7 @@ package object quickstart {
     def route = {
       case _ => new Service[HttpRequest, HttpResponse] {
         def apply(req: HttpRequest) = respondWith(Status.NotFound) { response =>
-          response(Json.obj("error" -> "Endpoint Not Found"))
+          response(Json.obj("status" -> "error",  "error" -> "Endpoint not found"))
         }
       }
     }
