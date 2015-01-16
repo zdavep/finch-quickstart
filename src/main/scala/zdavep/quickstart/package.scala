@@ -45,16 +45,6 @@ package object quickstart {
   }
 
   /**
-   * Endpoints for rendering a simple greeting.
-   */
-  def greetingEndpoints(version: String) = new Endpoint[HttpRequest, HttpResponse] {
-    def route = {
-      case Method.Get -> Root / "quickstart" / "api" / `version` / "greeting" / name => greetingService(name)
-      case Method.Get -> Root / "quickstart" / "api" / `version` / "greeting" => greetingService("World")
-    }
-  }
-
-  /**
    * Service for getting system status.
    */
   def statusService = new Service[HttpRequest, HttpResponse] {
@@ -69,10 +59,13 @@ package object quickstart {
   }
 
   /**
-   * Endpoints for getting system status.
+   * Endpoints for rendering a simple greeting and getting system status.
    */
-  def statusEndpoints(version: String) = new Endpoint[HttpRequest, HttpResponse] {
+
+  def quickstartEndpoints(version: String) = new Endpoint[HttpRequest, HttpResponse] {
     def route = {
+      case  Method.Get -> Root / "quickstart" / "api" / `version` / "greeting" / name => greetingService(name)
+      case  Method.Get -> Root / "quickstart" / "api" / `version` / "greeting" => greetingService("World")
       case  Method.Get -> Root / "quickstart" / "api" / `version` / "status" => statusService
       case Method.Head -> Root / "quickstart" / "api" / `version` / "status" => statusService
     }
@@ -81,7 +74,7 @@ package object quickstart {
   /**
    * A helper endpoint that renders a json message with a 404 status.
    */
-  val EndpointNotFound = new Endpoint[HttpRequest, HttpResponse] {
+  val endpointNotFound = new Endpoint[HttpRequest, HttpResponse] {
     def route = {
       case _ => new Service[HttpRequest, HttpResponse] {
         def apply(req: HttpRequest) = respondWith(Status.NotFound) { response =>
