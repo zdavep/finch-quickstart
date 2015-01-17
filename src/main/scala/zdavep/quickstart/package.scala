@@ -61,7 +61,6 @@ package object quickstart {
   /**
    * Endpoints for rendering a simple greeting and getting system status.
    */
-
   def quickstartEndpoints(version: String) = new Endpoint[HttpRequest, HttpResponse] {
     def route = {
       case  Method.Get -> Root / "quickstart" / "api" / `version` / "greeting" / name => greetingService(name)
