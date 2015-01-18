@@ -23,7 +23,8 @@ package object quickstart {
       "X-Content-Type-Options" -> "nosniff",
       "X-Frame-Options" -> "deny",
       "X-XSS-Protection" -> "1; mode=block",
-      "X-Content-Security-Policy" -> "default-src 'self'"
+      "Content-Security-Policy" -> "default-src 'self' http://localhost:8080",
+      "Cache-Control" -> "max-age=0, no-cache, no-store"
     )).toFuture
   }
 
