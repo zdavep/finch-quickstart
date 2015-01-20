@@ -6,10 +6,9 @@ import com.twitter.finagle.httpx.{Method, Status}
 import com.twitter.util.Future
 import io.finch._
 import io.finch.json._
-import io.finch.json.finch._
+//import io.finch.json.finch._
 import io.finch.request.OptionalParam
 import io.finch.response._
-
 
 package object quickstart {
 
@@ -17,16 +16,16 @@ package object quickstart {
    * A HTTP response helper that adds some useful security headers:
    * https://www.owasp.org/index.php/List_of_useful_HTTP_headers
    */
-  def respondWith(status: Status)(f: ResponseBuilder => HttpResponse) = {
-    f(ResponseBuilder(status).withHeaders(
+  def respondWith(status: Status)(f: ResponseBuilder => HttpResponse) = f(
+    ResponseBuilder(status).withHeaders(
       "Strict-Transport-Security" -> "max-age=631138519; includeSubDomains",
       "X-Content-Type-Options" -> "nosniff",
       "X-Frame-Options" -> "deny",
       "X-XSS-Protection" -> "1; mode=block",
       "Content-Security-Policy" -> "default-src 'self' http://localhost:8080",
       "Cache-Control" -> "max-age=0, no-cache, no-store"
-    )).toFuture
-  }
+    )
+  ).toFuture
 
   /**
    * Service for rendering a simple greeting.
