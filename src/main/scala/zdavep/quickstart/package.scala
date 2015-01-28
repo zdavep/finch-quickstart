@@ -6,7 +6,6 @@ import com.twitter.finagle.httpx.{Method, Status}
 import com.twitter.util.Future
 import io.finch._
 import io.finch.json._
-//import io.finch.json.finch._
 import io.finch.request.OptionalParam
 import io.finch.response._
 
