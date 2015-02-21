@@ -1,14 +1,14 @@
 name := """finch-quickstart"""
 
-version := "0.3"
+version := "0.5"
 
 organization := "zdavep"
 
 scalaVersion := "2.11.5"
 
 libraryDependencies ++= Seq(
-  "com.github.finagle" %% "finch-core" % "0.4.0",
-  "com.github.finagle" %% "finch-json" % "0.4.0",
+  "com.github.finagle" %% "finch-core" % "0.5.0",
+  "com.github.finagle" %% "finch-json" % "0.5.0",
   "org.scalatest" %% "scalatest" % "2.1.6" % "test"
 )
 
