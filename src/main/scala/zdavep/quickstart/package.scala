@@ -2,7 +2,7 @@ package zdavep
 
 import com.twitter.finagle.Service
 import com.twitter.finagle.httpx.path._
-import com.twitter.finagle.httpx.{Method, Status, Response => HttpxResponse}
+import com.twitter.finagle.httpx.{Method, Status}
 import com.twitter.util.Future
 import io.finch._
 import io.finch.json._
@@ -15,7 +15,7 @@ package object quickstart {
    * A HTTP response helper that adds some useful security headers:
    * https://www.owasp.org/index.php/List_of_useful_HTTP_headers
    */
-  def respondWith(status: Status)(f: ResponseBuilder => HttpResponse): Future[HttpxResponse] = f(
+  def respondWith(status: Status)(f: ResponseBuilder => HttpResponse): Future[HttpResponse] = f(
     ResponseBuilder(status).withHeaders(
       "Strict-Transport-Security" -> "max-age=631138519; includeSubDomains",
       "X-Content-Type-Options" -> "nosniff",
@@ -30,7 +30,7 @@ package object quickstart {
    * Service for rendering a simple greeting.
    */
   def greetingService(name: String): Service[HttpRequest, HttpResponse] = new Service[HttpRequest, HttpResponse] {
-    def apply(req: HttpRequest): Future[HttpxResponse] = {
+    def apply(req: HttpRequest): Future[HttpResponse] = {
       val titleFuture: Future[String] = for { title <- OptionalParam("title")(req) } yield title match {
         case Some(t) => s"$t "
         case None => ""
@@ -47,7 +47,7 @@ package object quickstart {
    * Service for getting system status.
    */
   def statusService: Service[HttpRequest, HttpResponse] = new Service[HttpRequest, HttpResponse] {
-    def apply(req: HttpRequest): Future[HttpxResponse] = {
+    def apply(req: HttpRequest): Future[HttpResponse] = {
       val msgFuture: Future[String] = for { msg <- OptionalParam("msg")(req) } yield msg.getOrElse("ok")
       msgFuture flatMap { msg =>
         respondWith(Status.Ok) { response =>
@@ -75,7 +75,7 @@ package object quickstart {
   val endpointNotFound: Endpoint[HttpRequest, HttpResponse] = new Endpoint[HttpRequest, HttpResponse] {
     def route: PartialFunction[(Method, Path), Service[HttpRequest, HttpResponse]] = {
       case _ => new Service[HttpRequest, HttpResponse] {
-        def apply(req: HttpRequest): Future[HttpxResponse] = respondWith(Status.NotFound) { response =>
+        def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.NotFound) { response =>
           response(Json.obj("status" -> "error",  "error" -> "Endpoint not found"))
         }
       }
