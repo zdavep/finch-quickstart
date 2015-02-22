@@ -21,7 +21,7 @@ package object quickstart {
       "X-Content-Type-Options" -> "nosniff",
       "X-Frame-Options" -> "deny",
       "X-XSS-Protection" -> "1; mode=block",
-      "Content-Security-Policy" -> "default-src 'self' http://localhost:8080",
+      //"Content-Security-Policy" -> "default-src 'self' http://localhost:8080",
       "Cache-Control" -> "max-age=0, no-cache, no-store"
     )
   ).toFuture
@@ -46,7 +46,7 @@ package object quickstart {
   /**
    * Service for getting system status.
    */
-  def statusService: Service[HttpRequest, HttpResponse] = new Service[HttpRequest, HttpResponse] {
+  val statusService = new Service[HttpRequest, HttpResponse] {
     def apply(req: HttpRequest): Future[HttpResponse] = {
       val msgFuture: Future[String] = for { msg <- OptionalParam("msg")(req) } yield msg.getOrElse("ok")
       msgFuture flatMap { msg =>

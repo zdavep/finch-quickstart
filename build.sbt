@@ -1,4 +1,4 @@
-name := """finch-quickstart"""
+name := "finch-quickstart"
 
 version := "0.5"
 
