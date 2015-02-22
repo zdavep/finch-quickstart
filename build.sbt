@@ -22,6 +22,8 @@ scalacOptions ++= Seq(
   "-encoding", "UTF-8"
 )
 
+wartremoverWarnings ++= Warts.all
+
 mainClass in Global := Some("zdavep.Main")
 
 assemblySettings
