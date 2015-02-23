@@ -3,6 +3,7 @@ package zdavep
 import com.twitter.finagle.Service
 import com.twitter.finagle.httpx.path._
 import com.twitter.finagle.httpx.{Method, Status}
+import com.twitter.util.Await
 import com.twitter.util.Future
 import io.finch._
 import io.finch.json._
@@ -15,7 +16,7 @@ package object quickstart {
    * A HTTP response helper that adds some useful security headers:
    * https://www.owasp.org/index.php/List_of_useful_HTTP_headers
    */
-  def respondWith(status: Status)(f: ResponseBuilder => HttpResponse): Future[HttpResponse] = f(
+  def respondWith(status: Status)(fn: ResponseBuilder => HttpResponse): Future[HttpResponse] = fn(
     ResponseBuilder(status).withHeaders(
       "Strict-Transport-Security" -> "max-age=631138519; includeSubDomains",
       "X-Content-Type-Options" -> "nosniff",
@@ -30,16 +31,12 @@ package object quickstart {
    * Service for rendering a simple greeting.
    */
   def greetingService(name: String): Service[HttpRequest, HttpResponse] = new Service[HttpRequest, HttpResponse] {
-    def apply(req: HttpRequest): Future[HttpResponse] = {
-      val titleFuture: Future[String] = for { title <- OptionalParam("title")(req) } yield title match {
+    def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.Ok) { response =>
+      val title: Future[String] = for { title <- OptionalParam("title")(req) } yield title match {
         case Some(t) => s"$t "
         case None => ""
       }
-      titleFuture flatMap { title =>
-        respondWith(Status.Ok) { response =>
-          response(Json.obj("status" -> "success", "data" -> s"Hello, $title$name!"))
-        }
-      }
+      response(Json.obj("status" -> "success", "data" -> s"Hello, ${Await.result(title)}$name!"))
     }
   }
 
@@ -47,13 +44,9 @@ package object quickstart {
    * Service for getting system status.
    */
   val statusService = new Service[HttpRequest, HttpResponse] {
-    def apply(req: HttpRequest): Future[HttpResponse] = {
-      val msgFuture: Future[String] = for { msg <- OptionalParam("msg")(req) } yield msg.getOrElse("ok")
-      msgFuture flatMap { msg =>
-        respondWith(Status.Ok) { response =>
-          response(Json.obj("status" -> "success", "data" -> s"$msg"))
-        }
-      }
+    def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.Ok) { response =>
+      val msg: Future[String] = for { msg <- OptionalParam("msg")(req) } yield msg.getOrElse("ok")
+      response(Json.obj("status" -> "success", "data" -> s"${Await.result(msg)}"))
     }
   }
 
