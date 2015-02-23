@@ -16,27 +16,27 @@ package object quickstart {
    * A HTTP response helper that adds some useful security headers:
    * https://www.owasp.org/index.php/List_of_useful_HTTP_headers
    */
-  def respondWith(status: Status)(fn: ResponseBuilder => HttpResponse): Future[HttpResponse] = fn(
-    ResponseBuilder(status).withHeaders(
-      "Strict-Transport-Security" -> "max-age=631138519; includeSubDomains",
-      "X-Content-Type-Options" -> "nosniff",
-      "X-Frame-Options" -> "deny",
-      "X-XSS-Protection" -> "1; mode=block",
-      //"Content-Security-Policy" -> "default-src 'self' http://localhost:8080",
-      "Cache-Control" -> "max-age=0, no-cache, no-store"
-    )
+  def respondWith(status: Status)(fn: ResponseBuilder => HttpResponse): Future[HttpResponse] =
+  fn(ResponseBuilder(status).withHeaders(
+    "Strict-Transport-Security" -> "max-age=631138519; includeSubDomains",
+    "X-Content-Type-Options" -> "nosniff",
+    "X-Frame-Options" -> "deny",
+    "X-XSS-Protection" -> "1; mode=block",
+    "Cache-Control" -> "max-age=0, no-cache, no-store")
   ).toFuture
 
   /**
    * Service for rendering a simple greeting.
    */
-  def greetingService(name: String): Service[HttpRequest, HttpResponse] = new Service[HttpRequest, HttpResponse] {
+  def greetingService(name: String): Service[HttpRequest, HttpResponse] =
+    new Service[HttpRequest, HttpResponse] {
+
     def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.Ok) { response =>
-      val title: Future[String] = for { title <- OptionalParam("title")(req) } yield title match {
-        case Some(t) => s"$t "
-        case None => ""
+      val json = for { title <- OptionalParam("title")(req) } yield title match {
+        case Some(title) => Json.obj("status" -> "success", "data" -> s"Hello, $title $name!")
+        case None => Json.obj("status" -> "success", "data" -> s"Hello, $name!")
       }
-      response(Json.obj("status" -> "success", "data" -> s"Hello, ${Await.result(title)}$name!"))
+      response(Await.result(json))
     }
   }
 
@@ -44,8 +44,9 @@ package object quickstart {
    * Service for getting system status.
    */
   val statusService = new Service[HttpRequest, HttpResponse] {
+
     def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.Ok) { response =>
-      val msg: Future[String] = for { msg <- OptionalParam("msg")(req) } yield msg.getOrElse("ok")
+      val msg = for { msg <- OptionalParam("msg")(req) } yield msg.getOrElse("ok")
       response(Json.obj("status" -> "success", "data" -> s"${Await.result(msg)}"))
     }
   }
@@ -53,23 +54,26 @@ package object quickstart {
   /**
    * Endpoints for rendering a simple greeting and getting system status.
    */
-  def quickstartEndpoints(version: String): Endpoint[HttpRequest, HttpResponse] = new Endpoint[HttpRequest, HttpResponse] {
+  def quickstartEndpoints(version: String): Endpoint[HttpRequest, HttpResponse] =
+    new Endpoint[HttpRequest, HttpResponse] {
+
+    private[this] val uriBase = Root / "quickstart" / "api" / `version`
     def route: PartialFunction[(Method, Path), Service[HttpRequest, HttpResponse]] = {
-      case  Method.Get -> Root / "quickstart" / "api" / `version` / "greeting" / name => greetingService(name)
-      case  Method.Get -> Root / "quickstart" / "api" / `version` / "greeting" => greetingService("World")
-      case  Method.Get -> Root / "quickstart" / "api" / `version` / "status" => statusService
-      case Method.Head -> Root / "quickstart" / "api" / `version` / "status" => statusService
+      case  Method.Get -> `uriBase` / "greeting" / name => greetingService(name)
+      case  Method.Get -> `uriBase` / "greeting" => greetingService("World")
+      case  Method.Get -> `uriBase` / "status" => statusService
+      case Method.Head -> `uriBase` / "status" => statusService
     }
   }
 
   /**
    * A helper endpoint that renders a json message with a 404 status.
    */
-  val endpointNotFound: Endpoint[HttpRequest, HttpResponse] = new Endpoint[HttpRequest, HttpResponse] {
+  val endpointNotFound = new Endpoint[HttpRequest, HttpResponse] {
     def route: PartialFunction[(Method, Path), Service[HttpRequest, HttpResponse]] = {
       case _ => new Service[HttpRequest, HttpResponse] {
-        def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.NotFound) { response =>
-          response(Json.obj("status" -> "error",  "error" -> "Endpoint not found"))
+        def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.NotFound) {
+          response => response(Json.obj("status" -> "error",  "error" -> "Endpoint not found"))
         }
       }
     }
