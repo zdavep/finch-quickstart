@@ -29,8 +29,7 @@ package object quickstart {
    * Service for rendering a simple greeting.
    */
   def greetingService(name: String): Service[HttpRequest, HttpResponse] =
-    new Service[HttpRequest, HttpResponse] {
-
+      new Service[HttpRequest, HttpResponse] {
     def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.Ok) { response =>
       val json = for { title <- OptionalParam("title")(req) } yield title match {
         case Some(title) => Json.obj("status" -> "success", "data" -> s"Hello, $title $name!")
@@ -44,7 +43,6 @@ package object quickstart {
    * Service for getting system status.
    */
   val statusService = new Service[HttpRequest, HttpResponse] {
-
     def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.Ok) { response =>
       val msg = for { msg <- OptionalParam("msg")(req) } yield msg.getOrElse("ok")
       response(Json.obj("status" -> "success", "data" -> s"${Await.result(msg)}"))
@@ -55,22 +53,24 @@ package object quickstart {
    * Endpoints for rendering a simple greeting and getting system status.
    */
   def quickstartEndpoints(version: String): Endpoint[HttpRequest, HttpResponse] =
-    new Endpoint[HttpRequest, HttpResponse] {
+      new Endpoint[HttpRequest, HttpResponse] {
 
     private[this] val uriBase = Root / "quickstart" / "api" / `version`
-    def route: PartialFunction[(Method, Path), Service[HttpRequest, HttpResponse]] = {
+
+    override def route = {
       case  Method.Get -> `uriBase` / "greeting" / name => greetingService(name)
       case  Method.Get -> `uriBase` / "greeting" => greetingService("World")
       case  Method.Get -> `uriBase` / "status" => statusService
       case Method.Head -> `uriBase` / "status" => statusService
     }
+
   }
 
   /**
    * A helper endpoint that renders a json message with a 404 status.
    */
   val endpointNotFound = new Endpoint[HttpRequest, HttpResponse] {
-    def route: PartialFunction[(Method, Path), Service[HttpRequest, HttpResponse]] = {
+    override def route = {
       case _ => new Service[HttpRequest, HttpResponse] {
         def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.NotFound) {
           response => response(Json.obj("status" -> "error",  "error" -> "Endpoint not found"))

@@ -7,9 +7,11 @@ import zdavep.quickstart._
 object Main extends App {
 
   val version = "v1"
-  val defPort = 8080
   val backend = quickstartEndpoints(version) orElse endpointNotFound
-  val port = if (args.length > 0) args(0).toInt else defPort
+
+  val defaultPort = 8080
+  val port = if (args.length > 0) args(0).toInt else defaultPort
+
   val server = Httpx.serve(new java.net.InetSocketAddress(port), backend)
   val _ = Await.ready(server)
 
