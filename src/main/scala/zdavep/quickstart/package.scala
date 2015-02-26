@@ -16,20 +16,21 @@ package object quickstart {
    * A HTTP response helper that adds some useful security headers:
    * https://www.owasp.org/index.php/List_of_useful_HTTP_headers
    */
-  def respondWith(status: Status)(fn: ResponseBuilder => HttpResponse): Future[HttpResponse] =
-  fn(ResponseBuilder(status).withHeaders(
-    "Strict-Transport-Security" -> "max-age=631138519; includeSubDomains",
-    "X-Content-Type-Options" -> "nosniff",
-    "X-Frame-Options" -> "deny",
-    "X-XSS-Protection" -> "1; mode=block",
-    "Cache-Control" -> "max-age=0, no-cache, no-store")
+  private[quickstart]
+  def respondWith(status: Status)(fn: ResponseBuilder => HttpResponse) = fn(
+    ResponseBuilder(status).withHeaders(
+      "Strict-Transport-Security" -> "max-age=631138519; includeSubDomains",
+      "X-Content-Type-Options" -> "nosniff",
+      "X-Frame-Options" -> "deny",
+      "X-XSS-Protection" -> "1; mode=block",
+      "Cache-Control" -> "max-age=0, no-cache, no-store")
   ).toFuture
 
   /**
    * Service for rendering a simple greeting.
    */
-  def greetingService(name: String): Service[HttpRequest, HttpResponse] =
-      new Service[HttpRequest, HttpResponse] {
+  private[quickstart]
+  def greetingService(name: String) = new Service[HttpRequest, HttpResponse] {
     def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.Ok) { response =>
       val json = for { title <- OptionalParam("title")(req) } yield title match {
         case Some(title) => Json.obj("status" -> "success", "data" -> s"Hello, $title $name!")
@@ -42,6 +43,7 @@ package object quickstart {
   /**
    * Service for getting system status.
    */
+  private[quickstart]
   val statusService = new Service[HttpRequest, HttpResponse] {
     def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.Ok) { response =>
       val msg = for { msg <- OptionalParam("msg")(req) } yield msg.getOrElse("ok")
