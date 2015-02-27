@@ -57,7 +57,7 @@ package object quickstart {
   def quickstartEndpoints(version: String): Endpoint[HttpRequest, HttpResponse] =
       new Endpoint[HttpRequest, HttpResponse] {
 
-    private[this] val uriBase = Root / "quickstart" / "api" / `version`
+    private[this] lazy val uriBase = Root / "quickstart" / "api" / `version`
 
     override def route = {
       case  Method.Get -> `uriBase` / "greeting" / name => greetingService(name)
