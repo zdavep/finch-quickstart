@@ -2,17 +2,15 @@ package zdavep
 
 import com.twitter.finagle.Httpx
 import com.twitter.util.Await
+import io.finch.{Endpoint => _, _}
 import zdavep.quickstart._
 
 object Main extends App {
 
   val version = "v1"
-  val backend = quickstartEndpoints(version) orElse endpointNotFound
+  val backend = handleExceptions ! quickstartEndpoints(version)
 
-  val defaultPort = 8080
-  val port = if (args.length > 0) args(0).toInt else defaultPort
-
-  val server = Httpx.serve(new java.net.InetSocketAddress(port), backend)
+  val server = Httpx.serve(":8080", backend)
   val _ = Await.ready(server)
 
 }

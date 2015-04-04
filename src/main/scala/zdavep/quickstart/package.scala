@@ -1,84 +1,81 @@
 package zdavep
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.httpx.path._
-import com.twitter.finagle.httpx.{Method, Status}
-import com.twitter.util.Await
+import com.twitter.finagle.{Service, SimpleFilter}
+import com.twitter.finagle.httpx.Status
 import com.twitter.util.Future
-import io.finch._
+import io.finch.{Endpoint => _, _}
 import io.finch.json._
-import io.finch.request.OptionalParam
+import io.finch.request._
 import io.finch.response._
+import io.finch.route._
 
 package object quickstart {
 
-  /**
-   * A HTTP response helper that adds some useful security headers:
-   * https://www.owasp.org/index.php/List_of_useful_HTTP_headers
-   */
-  private[quickstart]
-  def respondWith(status: Status)(fn: ResponseBuilder => HttpResponse) = fn(
-    ResponseBuilder(status).withHeaders(
+  // A HTTP response helper that adds some useful security headers:
+  // https://www.owasp.org/index.php/List_of_useful_HTTP_headers
+  private[this] def _respondWith(status: Status)(fn: ResponseBuilder => HttpResponse) = fn(
+    ResponseBuilder(status).withHeaders("X-Content-Type-Options" -> "nosniff",
       "Strict-Transport-Security" -> "max-age=631138519; includeSubDomains",
-      "X-Content-Type-Options" -> "nosniff",
-      "X-Frame-Options" -> "deny",
-      "X-XSS-Protection" -> "1; mode=block",
-      "Cache-Control" -> "max-age=0, no-cache, no-store")
-  ).toFuture
+      "X-Frame-Options" -> "deny", "X-XSS-Protection" -> "1; mode=block",
+      "Cache-Control" -> "max-age=0, no-cache, no-store"))
 
-  /**
-   * Service for rendering a simple greeting.
-   */
-  private[quickstart]
-  def greetingService(name: String) = new Service[HttpRequest, HttpResponse] {
-    def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.Ok) { response =>
-      val json = for { title <- OptionalParam("title")(req) } yield title match {
-        case Some(title) => Json.obj("status" -> "success", "data" -> s"Hello, $title $name!")
-        case None => Json.obj("status" -> "success", "data" -> s"Hello, $name!")
-      }
-      response(Await.result(json))
+  // A HTTP response helper that adds some useful security headers:
+  // https://www.owasp.org/index.php/List_of_useful_HTTP_headers
+  private[this] def respondWith(status: Status)(fn: ResponseBuilder => HttpResponse) =
+    _respondWith(status)(fn).toFuture
+
+  // Greeting reader
+  private[this] def readGreeting(name: String) = new Service[HttpRequest, String] {
+    def buildGreeting(maybeTitle: Option[String]): String = maybeTitle match {
+      case Some(title) => s"Hello, $title $name"
+      case None => s"Hello, $name"
+    }
+    def apply(req: HttpRequest): Future[String] = (paramOption("title") ~> buildGreeting)(req)
+  }
+
+  // Greeting responder
+  private[this] val greetingResponder = new Service[String, HttpResponse] {
+    def apply(greeting: String): Future[HttpResponse] = respondWith(Status.Ok) { response =>
+      response(Json.obj("status" -> "success", "greeting" -> greeting))
     }
   }
 
-  /**
-   * Service for getting system status.
-   */
-  private[quickstart]
-  val statusService = new Service[HttpRequest, HttpResponse] {
-    def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.Ok) { response =>
-      val msg = for { msg <- OptionalParam("msg")(req) } yield msg.getOrElse("ok")
-      response(Json.obj("status" -> "success", "data" -> s"${Await.result(msg)}"))
-    }
-  }
+  // Service combinator
+  private[this] def greetingService(name: String) = readGreeting(name) ! greetingResponder
 
-  /**
-   * Endpoints for rendering a simple greeting and getting system status.
-   */
+  // Greeting endpoint that takes a name parameter
+  private[this] def greetingEp1(version: String) =
+    Get / "quickstart" / "api" / `version` / "greeting" / string /> greetingService _
+
+  // Greeting endpoint that uses a default name parameter
+  private[this] def greetingEp2(version: String) =
+    Get / "quickstart" / "api" / `version` / "greeting" /> greetingService("World")
+
+  // Public greeting endpoint combinator
   def quickstartEndpoints(version: String): Endpoint[HttpRequest, HttpResponse] =
-      new Endpoint[HttpRequest, HttpResponse] {
+    greetingEp1(version) | greetingEp2(version)
 
-    private[this] lazy val uriBase = Root / "quickstart" / "api" / `version`
-
-    override def route = {
-      case  Method.Get -> `uriBase` / "greeting" / name => greetingService(name)
-      case  Method.Get -> `uriBase` / "greeting" => greetingService("World")
-      case  Method.Get -> `uriBase` / "status" => statusService
-      case Method.Head -> `uriBase` / "status" => statusService
+  // Handle errors when a requested route was not found.
+  private[this] val handleRouteNotFound: PartialFunction[Throwable, HttpResponse] = {
+    case e: RouteNotFound => _respondWith(Status.NotFound) { response =>
+      response(Json.obj("error" -> Option(e.getMessage).getOrElse("Route Not Found")))
     }
+  }
 
+  // Combine all exception handlers.
+  private[this]
+  val allExceptions = handleRouteNotFound orElse PartialFunction[Throwable, HttpResponse] {
+    case t: Throwable => _respondWith(Status.InternalServerError) { response =>
+      response(Json.obj("error" -> Option(t.getMessage).getOrElse("Internal Server Error")))
+    }
   }
 
   /**
-   * A helper endpoint that renders a json message with a 404 status.
+   * A Finagle filter that converts exceptions to http responses.
    */
-  val endpointNotFound = new Endpoint[HttpRequest, HttpResponse] {
-    override def route = {
-      case _ => new Service[HttpRequest, HttpResponse] {
-        def apply(req: HttpRequest): Future[HttpResponse] = respondWith(Status.NotFound) {
-          response => response(Json.obj("status" -> "error",  "error" -> "Endpoint not found"))
-        }
-      }
-    }
+  val handleExceptions = new SimpleFilter[HttpRequest, HttpResponse] {
+    def apply(req: HttpRequest, service: Service[HttpRequest, HttpResponse]): Future[HttpResponse] =
+     service(req).handle(allExceptions)
   }
 
 }

@@ -1,15 +1,15 @@
 name := "finch-quickstart"
 
-version := "0.5"
+version := "0.6"
 
 organization := "zdavep"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
-  "com.github.finagle" %% "finch-core" % "0.5.0",
-  "com.github.finagle" %% "finch-json" % "0.5.0",
-  "org.scalatest" %% "scalatest" % "2.1.6" % "test"
+  "com.github.finagle" %% "finch-core" % "0.6.0",
+  "com.github.finagle" %% "finch-json" % "0.6.0",
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
 scalacOptions ++= Seq(
@@ -29,7 +29,5 @@ scalacOptions ++= Seq(
 wartremoverWarnings ++= Warts.allBut(Wart.NoNeedForMonad)
 
 mainClass in Global := Some("zdavep.Main")
-
-assemblySettings
 
 addCommandAlias("dist", ";clean;compile;scalastyle;assembly")
