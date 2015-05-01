@@ -25,7 +25,7 @@ scalacOptions ++= Seq(
   "-Ywarn-value-discard"
 )
 
-wartremoverWarnings in (Compile, compile) ++= Warts.allBut(Wart.Throw)
+wartremoverWarnings in (Compile, compile) ++= Warts.unsafe
 
 mainClass in Global := Some("zdavep.Main")
 

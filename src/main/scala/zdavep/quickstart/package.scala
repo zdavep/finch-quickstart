@@ -30,9 +30,8 @@ package object quickstart {
 
   // Greeting reader
   private[this] def readGreeting(name: String) = new Service[HttpRequest, String] {
-    def buildGreeting(maybeTitle: Option[String]): String = maybeTitle match {
-      case Some(title) => s"Hello, $title $name"
-      case None => s"Hello, $name"
+    def buildGreeting(maybeTitle: Option[String]): String = maybeTitle.fold(s"Hello, $name") {
+      title => s"Hello, $title $name"
     }
     def apply(req: HttpRequest): Future[String] = (paramOption("title") ~> buildGreeting)(req)
   }
@@ -67,14 +66,16 @@ package object quickstart {
     }
   }
 
-  // Combine all exception handlers.
-  private[this]
-  val allExceptions = handleRouteNotFound orElse PartialFunction[Throwable, HttpResponse] {
+  // Handle any uncaught exceptions.
+  private[this] val handleThrowables: PartialFunction[Throwable, HttpResponse] = {
     case t: Throwable => _respondWith(Status.InternalServerError) { response =>
       response(Json(
         "status" := "error", "error" := Option(t.getMessage).getOrElse("Internal Server Error")))
     }
   }
+
+  // Combine all exception handlers.
+  private[this] val allExceptions = handleRouteNotFound orElse handleThrowables
 
   /**
    * A Finagle filter that converts exceptions to http responses.
