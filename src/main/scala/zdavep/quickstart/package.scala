@@ -1,15 +1,19 @@
 package zdavep
 
+import argonaut._, Argonaut._
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.finagle.httpx.Status
 import com.twitter.util.Future
 import io.finch.{Endpoint => _, _}
-import io.finch.json._
 import io.finch.request._
 import io.finch.response._
 import io.finch.route._
 
 package object quickstart {
+
+  // Make sure we can encode argonaut json objects using our response builder
+  implicit def encodeArgonaut[A](implicit encode: EncodeJson[A]): EncodeResponse[A] =
+    EncodeResponse("application/json")(encode.encode(_).nospaces)
 
   // A HTTP response helper that adds some useful security headers:
   // https://www.owasp.org/index.php/List_of_useful_HTTP_headers
@@ -36,7 +40,7 @@ package object quickstart {
   // Greeting responder
   private[this] val greetingResponder = new Service[String, HttpResponse] {
     def apply(greeting: String): Future[HttpResponse] = respondWith(Status.Ok) { response =>
-      response(Json.obj("status" -> "success", "greeting" -> greeting))
+      response(Json("status" := "success", "greeting" := greeting))
     }
   }
 
@@ -58,7 +62,8 @@ package object quickstart {
   // Handle errors when a requested route was not found.
   private[this] val handleRouteNotFound: PartialFunction[Throwable, HttpResponse] = {
     case e: RouteNotFound => _respondWith(Status.NotFound) { response =>
-      response(Json.obj("error" -> Option(e.getMessage).getOrElse("Route Not Found")))
+      response(Json(
+        "status" := "error", "error" := Option(e.getMessage).getOrElse("Route Not Found")))
     }
   }
 
@@ -66,7 +71,8 @@ package object quickstart {
   private[this]
   val allExceptions = handleRouteNotFound orElse PartialFunction[Throwable, HttpResponse] {
     case t: Throwable => _respondWith(Status.InternalServerError) { response =>
-      response(Json.obj("error" -> Option(t.getMessage).getOrElse("Internal Server Error")))
+      response(Json(
+        "status" := "error", "error" := Option(t.getMessage).getOrElse("Internal Server Error")))
     }
   }
 
