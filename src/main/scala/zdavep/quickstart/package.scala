@@ -5,15 +5,12 @@ import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.finagle.httpx.Status
 import com.twitter.util.Future
 import io.finch.{Endpoint => _, _}
+import io.finch.argonaut._
 import io.finch.request._
 import io.finch.response._
 import io.finch.route._
 
 package object quickstart {
-
-  // Make sure we can encode argonaut json objects using our response builder
-  implicit def encodeArgonaut[A](implicit encode: EncodeJson[A]): EncodeResponse[A] =
-    EncodeResponse("application/json")(encode.encode(_).nospaces)
 
   // A HTTP response helper that adds some useful security headers:
   // https://www.owasp.org/index.php/List_of_useful_HTTP_headers
@@ -47,16 +44,16 @@ package object quickstart {
   private[this] def greetingService(name: String) = readGreeting(name) ! greetingResponder
 
   // Greeting endpoint that takes a name parameter
-  private[this] def greetingEp1(version: String) =
+  private[this] def greetingEp(version: String) =
     Get / "quickstart" / "api" / `version` / "greeting" / string /> greetingService _
 
   // Greeting endpoint that uses a default name parameter
-  private[this] def greetingEp2(version: String) =
+  private[this] def greetingEpDefault(version: String) =
     Get / "quickstart" / "api" / `version` / "greeting" /> greetingService("World")
 
   // Public greeting endpoint combinator
   def quickstartEndpoints(version: String): Endpoint[HttpRequest, HttpResponse] =
-    greetingEp1(version) | greetingEp2(version)
+    greetingEp(version) | greetingEpDefault(version)
 
   // Handle errors when a requested route was not found.
   private[this] val handleRouteNotFound: PartialFunction[Throwable, HttpResponse] = {
