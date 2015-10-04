@@ -1,23 +1,35 @@
-/RUNNING_PID
-/logs/
-/project/project/
-/project/target/
-/target/
+# Files
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.pid
+hs_err_pid*
 .DS_Store
-.idea
-.idea_modules
+
+# Dirs
+bin
+build
+
+# sbt specific
+.cache
+.history
+.lib/
+dist/*
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+project/project/
+project/target/
+target/
+
+# IDE specific
+.scala_dependencies
+.worksheet
 .classpath
 .project
 .settings
-.yardoc
-.yardopts
-bin
-build
-target
-out
-*.iml
-*.ipr
-*.iws
-*.zip
-*.class
-.history
+.idea/
+.idea_modules/

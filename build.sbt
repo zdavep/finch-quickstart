@@ -1,11 +1,13 @@
-name := "finch-quickstart"
-version := "0.7"
+name := "greeting"
+version := "0.1"
 organization := "zdavep"
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
-  "com.github.finagle" %% "finch-core" % "0.7.0",
-  "com.github.finagle" %% "finch-argonaut" % "0.7.0",
+  "com.github.finagle" %% "finch-core" % "0.8.0" exclude("org.openjdk.jmh", "*"),
+  "com.github.finagle" %% "finch-argonaut" % "0.8.0" exclude("org.openjdk.jmh", "*"),
+  "com.typesafe" % "config" % "1.2.1",
+  "org.slf4j" % "slf4j-api" % "1.7.12",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
@@ -27,8 +29,10 @@ scalacOptions ++= Seq(
 
 wartremoverWarnings in (Compile, compile) ++= Warts.unsafe
 
-mainClass in Global := Some("zdavep.Main")
+mainClass in Global := Some("app.Main")
 
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 
 addCommandAlias("dist", ";clean;compile;scalastyle;assembly")
+
+Revolver.settings
