@@ -1,10 +1,11 @@
 package app
 
+import com.twitter.conversions.time._
 import com.twitter.finagle.Httpx
 import com.twitter.util.Await
-import app.routes.greetingAPI
-import app.util.config
 import app.errors.handleExceptions
+import app.routes.greetingAPI
+import app.util.{config, timeoutFilter}
 
 /**
  * Greeting service server.
@@ -18,5 +19,5 @@ object Main extends App { // Load port and start server
  * Greeting service API.
  */
 object Backend { // Init backend API
-  val api = handleExceptions andThen greetingAPI
+  val api = handleExceptions andThen timeoutFilter(250.millis) andThen greetingAPI
 }
