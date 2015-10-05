@@ -14,7 +14,7 @@ object Greeting {
    * Create a new greeting instance.
    */
   def decorate(message: String): Greeting = {
-    val sleepMs = 50L
+    val sleepMs = 15L
     Thread.sleep(sleepMs)
     Greeting(s"*** $message ***")
   }

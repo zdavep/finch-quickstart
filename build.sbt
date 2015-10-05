@@ -1,5 +1,5 @@
-name := "greeting"
-version := "0.1"
+name := "finch-quickstart"
+version := "0.8"
 organization := "zdavep"
 scalaVersion := "2.11.7"
 
@@ -8,6 +8,7 @@ libraryDependencies ++= Seq(
   "com.github.finagle" %% "finch-argonaut" % "0.8.0" exclude("org.openjdk.jmh", "*"),
   "com.typesafe" % "config" % "1.2.1",
   "org.slf4j" % "slf4j-api" % "1.7.12",
+  "org.slf4j" % "slf4j-simple" % "1.7.12",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
