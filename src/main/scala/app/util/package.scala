@@ -15,8 +15,8 @@ package object util {
   // Dynamic config loader
   private def _loadConfig = {
     val _config = ConfigFactory.load()
-    if (!_config.getBoolean("application.config.override")) _config else { // Allow overridden config from external file
-      ConfigFactory.parseFile(new java.io.File(_config.getString("application.config.file")))
+    if (!_config.getBoolean("app.conf.override")) _config else { // Allow overridden config from external file
+      ConfigFactory.parseFile(new java.io.File(_config.getString("app.conf.file")))
     }
   }
 

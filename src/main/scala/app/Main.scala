@@ -11,7 +11,7 @@ import app.util.{config, timeoutFilter}
  * Greeting service server.
  */
 object Main extends App { // Load port and start server
-  val port = config.getInt("application.port")
+  val port = config.getInt("app.port")
   val _ = Await.ready(Httpx.serve(s":$port", Backend.api))
 }
 
