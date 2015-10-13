@@ -4,7 +4,6 @@ import argonaut._, Argonaut._
 import com.twitter.finagle.{Service, SimpleFilter}
 import com.twitter.finagle.httpx.{Request, Response}
 import com.twitter.util.Future
-import io.finch._
 import io.finch.argonaut._
 import io.finch.response._
 import io.finch.request._
@@ -37,7 +36,7 @@ package object errors {
   /**
    * Function for building illegal argument exception futures.
    */
-  def illegalArgs[A](msg: String): Future[A] = new IllegalArgumentException(msg).toFutureException[A]
+  def illegalArgs[A](msg: String): Future[A] = Future.exception(new IllegalArgumentException(msg))
 
   /**
    * A Finagle filter that converts exceptions to http responses.
