@@ -1,10 +1,10 @@
 package app
 
+import app.errors._
 import app.models.Greeting
 import app.services._
 import io.finch._
 import io.finch.argonaut._
-import io.finch.request._
 
 /**
  * Greeting service routes.
@@ -35,5 +35,6 @@ package object routes {
   /**
    * Greeting API
    */
-  val greetingAPI = (multiGreetingEp :+: greetingEp :+: greetingByNameEp :+: statusEp).toService
+  val greetingAPI = (multiGreetingEp :+: greetingEp :+: greetingByNameEp :+: statusEp)
+    .handle(allExceptions).toService
 }

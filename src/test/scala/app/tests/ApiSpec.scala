@@ -1,7 +1,7 @@
 package app.tests
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.httpx.{Request, Response}
+import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.Await
 import org.jboss.netty.handler.codec.http.{DefaultHttpRequest, HttpMethod, HttpVersion}
 import org.scalatest._
@@ -24,10 +24,10 @@ class ApiSpec extends FlatSpec with Matchers {
     request(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, path))
 
   "API" should "allow GET on status route" in {
-    await(GET("/zdavep")).status shouldBe io.finch.response.Ok().status
+    await(GET("/zdavep")).status shouldBe Status.Ok
   }
 
   it should "return NotFound status for unknown route: /foo/bar" in {
-    await(GET("/foo/bar")).status shouldBe io.finch.response.NotFound.status
+    await(GET("/foo/bar")).status shouldBe Status.NotFound
   }
 }
