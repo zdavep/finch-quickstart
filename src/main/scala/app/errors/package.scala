@@ -35,14 +35,6 @@ package object errors {
    */
   def illegalArgs[A](msg: String): Future[A] = Future.exception(new IllegalArgumentException(msg))
 
-  // Error reply helper
-  private def reply(status: Status, data: String) = {
-    val rep = Response(status)
-    rep.setContentTypeJson()
-    rep.write(data)
-    rep
-  }
-
   /**
    * A Finagle filter that converts exceptions to http responses.
    */
@@ -50,7 +42,10 @@ package object errors {
     def apply(req: Request, service: Service[Request, Response]): Future[Response] =
       service(req).handle { case (t: Throwable) =>
         val data = Json("error" := Option(t.getMessage).getOrElse("Internal server error"))
-        reply(Status.InternalServerError, data.toString())
+        val rep = Response(Status.InternalServerError)
+        rep.setContentTypeJson()
+        rep.write(data.nospaces)
+        rep
       }
   }
 }
