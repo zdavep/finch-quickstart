@@ -1,9 +1,9 @@
 package app.tests
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.http.{ Request, Response, Status }
 import com.twitter.util.Await
-import org.jboss.netty.handler.codec.http.{DefaultHttpRequest, HttpMethod, HttpVersion}
+import org.jboss.netty.handler.codec.http.{ DefaultHttpRequest, HttpMethod, HttpVersion }
 import org.scalatest._
 import org.scalatest.Matchers
 import app.Backend

@@ -39,3 +39,5 @@ assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 addCommandAlias("dist", ";clean;compile;scalastyle;assembly")
 
 Revolver.settings
+
+scalariformSettings

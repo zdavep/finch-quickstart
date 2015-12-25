@@ -2,7 +2,7 @@ package app
 
 import app.errors._
 import app.routes.greetingAPI
-import app.util.{config, timeoutFilter}
+import app.util.{ config, timeoutFilter }
 import com.twitter.conversions.time._
 import com.twitter.finagle.Http
 import com.twitter.util.Await
