@@ -1,13 +1,13 @@
 name := "finch-quickstart"
-version := "0.9.2"
+version := "0.9.3"
 organization := "zdavep"
 scalaVersion := "2.11.7"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies ++= Seq(
-  "com.github.finagle" %% "finch-core" % "0.9.2" exclude("org.openjdk.jmh", "*"),
-  "com.github.finagle" %% "finch-argonaut" % "0.9.2" exclude("org.openjdk.jmh", "*"),
+  "com.github.finagle" %% "finch-core" % "0.9.3" exclude("org.openjdk.jmh", "*"),
+  "com.github.finagle" %% "finch-argonaut" % "0.9.3" exclude("org.openjdk.jmh", "*"),
   "com.typesafe" % "config" % "1.2.1",
   "org.slf4j" % "slf4j-api" % "1.7.12",
   "org.slf4j" % "slf4j-simple" % "1.7.12",
