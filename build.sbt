@@ -30,8 +30,6 @@ scalacOptions ++= Seq(
   "-Ywarn-value-discard"
 )
 
-wartremoverWarnings in (Compile, compile) ++= Warts.unsafe
-
 mainClass in Global := Some("app.Main")
 
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
