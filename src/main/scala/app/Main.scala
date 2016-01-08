@@ -2,10 +2,10 @@ package app
 
 import app.errors._
 import app.routes.greetingAPI
-import app.util.{ config, timeoutFilter }
-import com.twitter.conversions.time._
+import app.util.{ config, rateLimiter, timeoutFilter }
 import com.twitter.finagle.Http
-import com.twitter.util.Await
+import com.twitter.finagle.util.DefaultTimer
+import com.twitter.util.{ Timer, Await }
 
 /**
  * Greeting service server.
@@ -19,5 +19,7 @@ object Main extends App { // Load port and start server
  * Greeting service API.
  */
 object Backend { // Init backend API
-  val api = exceptionFilter andThen timeoutFilter(250.millis) andThen greetingAPI
+  implicit val timer: Timer = DefaultTimer.twitter
+  val rateFilter = rateLimiter()
+  val api = errorFilter andThen rateFilter andThen timeoutFilter() andThen greetingAPI
 }

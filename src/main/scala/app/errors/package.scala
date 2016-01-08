@@ -20,13 +20,13 @@ package object errors {
     case e: Throwable => Json.obj("error" -> jString(e.getMessage))
   }
 
-  // Handle all errors and return the correct http status
-  def allExceptions: PartialFunction[Throwable, Output.Failure] = {
+  // Handle finch errors and return the correct http status
+  def domainExceptions: PartialFunction[Throwable, Output.Failure] = {
     case e: IllegalArgumentException =>
-      log.error(s"Bad request from client", e)
+      log.error("Bad request from client", e)
       BadRequest(e)
     case t: Throwable =>
-      log.error(s"Unexpected exception", t)
+      log.error("Unexpected exception", t)
       InternalServerError(new Exception(t.getCause))
   }
 
@@ -38,7 +38,7 @@ package object errors {
   /**
    * A Finagle filter that converts exceptions to http responses.
    */
-  final val exceptionFilter = new SimpleFilter[Request, Response] {
+  final val errorFilter = new SimpleFilter[Request, Response] {
     def apply(req: Request, service: Service[Request, Response]): Future[Response] =
       service(req).handle {
         case (t: Throwable) =>

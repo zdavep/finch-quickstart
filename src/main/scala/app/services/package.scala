@@ -21,7 +21,7 @@ package object services {
    * Multi-greeting service
    */
   def greetings(name: String, n: Int, title: Option[String]): Future[Seq[Greeting]] =
-    if (n < 0 || n > 99) illegalArgs("Bad number; 0 < n < 100") else inNewThread {
+    if (n <= 0 || n > 99) illegalArgs("Bad number; 0 < n < 100") else inNewThread {
       val msg = title.fold(s"Hello, $name")(title => s"Hello, $title $name")
       (1 to n).map(i => Greeting.decorate(s"$msg: $i")).toSeq
     }

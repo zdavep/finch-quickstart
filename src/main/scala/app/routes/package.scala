@@ -32,9 +32,11 @@ package object routes {
   // Route for system status
   private val statusEp = get(base)(Ok(health)) | head(base)(Ok(health))
 
+  // Endpoints
+  private val endpoints = multiGreetingEp :+: greetingEp :+: greetingByNameEp :+: statusEp
+
   /**
    * Greeting API
    */
-  val greetingAPI = (multiGreetingEp :+: greetingEp :+: greetingByNameEp :+: statusEp)
-    .handle(allExceptions).toService
+  val greetingAPI = endpoints.handle(domainExceptions).toService
 }

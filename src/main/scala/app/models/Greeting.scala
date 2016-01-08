@@ -24,7 +24,7 @@ object Greeting {
    */
   def decorate(message: String): Greeting = {
     val sleepMs = 15L
-    Thread.sleep(sleepMs)
+    Thread.sleep(sleepMs) // Simulate some I/O
     Greeting(s"*** $message ***")
   }
 }
