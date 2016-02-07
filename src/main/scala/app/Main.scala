@@ -20,6 +20,10 @@ object Main extends App { // Load port and start server
  */
 object Backend { // Init backend API
   implicit val timer: Timer = DefaultTimer.twitter
-  val rateFilter = rateLimiter()
-  val api = errorFilter andThen rateFilter andThen timeoutFilter() andThen greetingAPI
+  val throttle = config.getBoolean("app.throttle")
+  val api = if (throttle) {
+    errorFilter andThen rateLimiter() andThen timeoutFilter() andThen greetingAPI
+  } else {
+    errorFilter andThen timeoutFilter() andThen greetingAPI
+  }
 }
