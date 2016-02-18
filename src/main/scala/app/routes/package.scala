@@ -11,6 +11,9 @@ import io.finch.argonaut._
  */
 package object routes {
 
+  // Logging
+  private val log = org.slf4j.LoggerFactory.getLogger(getClass)
+
   // Base path
   private val health = "ok"
   private val base = "zdavep"
@@ -38,5 +41,12 @@ package object routes {
   /**
    * Greeting API
    */
-  val greetingAPI = endpoints.handle(domainExceptions).toService
+  val greetingAPI = endpoints.handle({
+    case e: IllegalArgumentException =>
+      log.error("Bad request from client", e)
+      BadRequest(e)
+    case t: Throwable =>
+      log.error("Unexpected exception", t)
+      InternalServerError(new Exception(t.getCause))
+  }).toService
 }
