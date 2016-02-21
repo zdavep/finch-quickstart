@@ -1,6 +1,6 @@
 package app.models
 
-import argonaut._, Argonaut._
+import io.circe.{ Json, Encoder }
 
 /**
  * Greeting case class.
@@ -13,11 +13,10 @@ case class Greeting(message: String)
 object Greeting {
 
   /**
-   * Provides an in implementation of the EncodeJson Typeclass (from Argonaut) for Greeting
+   * Provides an implicit JSON encoder for the Greeting model.
    */
-  implicit def encodeGreetingAsJson: EncodeJson[Greeting] = EncodeJson { (g: Greeting) =>
-    ("greeting" := g.message) ->: jEmptyObject
-  }
+  implicit val encodeDocumentAsJson: Encoder[Greeting] =
+    Encoder.instance(g => Json.obj("greeting" -> Json.string(g.message)))
 
   /**
    * Create a new greeting instance.

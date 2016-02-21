@@ -4,7 +4,7 @@ import app.errors._
 import app.models.Greeting
 import app.services._
 import io.finch._
-import io.finch.argonaut._
+import io.finch.circe._
 
 /**
  * Greeting service routes.
