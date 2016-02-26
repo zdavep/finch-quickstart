@@ -3,16 +3,12 @@ package app
 import com.twitter.finagle.{ Service, SimpleFilter }
 import com.twitter.finagle.http.{ Request, Response, Status }
 import com.twitter.util.Future
-import io.circe.{ Json, Encoder }
+import io.circe.Json
 
 /**
  * Error handling utilities.
  */
 package object errors {
-
-  // Convert domain errors to JSON
-  implicit val encodeException: Encoder[Exception] = Encoder.instance(e =>
-    Json.obj("type" -> Json.string(e.getClass.getSimpleName), "error" -> Json.string(e.getMessage)))
 
   /**
    * Function for building illegal argument exception futures.
@@ -26,7 +22,10 @@ package object errors {
     def apply(req: Request, service: Service[Request, Response]): Future[Response] =
       service(req).handle {
         case (t: Throwable) =>
-          val data = Json.obj("error" -> Json.string(Option(t.getMessage).getOrElse("Internal server error")))
+          val data = Json.obj(
+            "type" -> Json.string(t.getClass.getSimpleName),
+            "error" -> Json.string(Option(t.getMessage).getOrElse("Internal Server Error"))
+          )
           val rep = Response(Status.InternalServerError)
           rep.setContentTypeJson()
           rep.write(data.toString())

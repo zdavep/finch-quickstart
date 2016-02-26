@@ -1,8 +1,9 @@
 package app
 
-import app.errors._
+//import app.errors._
 import app.models.Greeting
 import app.services._
+import io.circe.{ Json, Encoder }
 import io.finch._
 import io.finch.circe._
 
@@ -38,15 +39,22 @@ package object routes {
   // Endpoints
   private val endpoints = multiGreetingEp :+: greetingEp :+: greetingByNameEp :+: statusEp
 
+  // Convert domain errors to JSON
+  implicit val encodeException: Encoder[Exception] = Encoder.instance(e =>
+    Json.obj(
+      "type" -> Json.string(e.getClass.getSimpleName),
+      "error" -> Json.string(Option(e.getMessage).getOrElse("Internal Server Error"))
+    ))
+
   /**
    * Greeting API
    */
-  val greetingAPI = endpoints.handle({
+  val greetingAPI = endpoints.handle {
     case e: IllegalArgumentException =>
       log.error("Bad request from client", e)
       BadRequest(e)
     case t: Throwable =>
       log.error("Unexpected exception", t)
       InternalServerError(new Exception(t.getCause))
-  }).toService
+  } toService
 }
