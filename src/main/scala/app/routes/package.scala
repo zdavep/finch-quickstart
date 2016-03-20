@@ -1,11 +1,11 @@
 package app
 
-//import app.errors._
-import app.models.Greeting
-import app.services._
+import models.Greeting
+import services._
 import io.circe.{ Json, Encoder }
 import io.finch._
 import io.finch.circe._
+import util.config
 
 /**
  * Greeting service routes.
@@ -17,8 +17,8 @@ package object routes {
 
   // Base path
   private val health = "ok"
-  private val base = "zdavep"
-  private val path = base / "api" / "v1" / "greeting"
+  private val context = config.getString("app.context")
+  private val path = context / "api" / "v1" / "greeting"
 
   // Route for rendering multiple greetings
   private val multiGreetingEp = get(path / string / int ? paramOption("title")) {
@@ -34,7 +34,7 @@ package object routes {
   private val greetingEp: Endpoint[Greeting] = get(path)(Ok(greeting("World", None)))
 
   // Route for system status
-  private val statusEp = get(base)(Ok(health)) | head(base)(Ok(health))
+  private val statusEp = get(context)(Ok(health)) | head(context)(Ok(health))
 
   // Endpoints
   private val endpoints = multiGreetingEp :+: greetingEp :+: greetingByNameEp :+: statusEp

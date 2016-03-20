@@ -1,8 +1,8 @@
 package app
 
-import app.errors._
-import app.routes.greetingAPI
-import app.util.{ config, rateLimiter, timeoutFilter }
+import errors._
+import routes.greetingAPI
+import util.{ config, rateLimiter, timeoutFilter }
 import com.twitter.finagle.Http
 import com.twitter.finagle.util.DefaultTimer
 import com.twitter.util.{ Timer, Await }
