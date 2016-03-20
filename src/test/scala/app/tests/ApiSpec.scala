@@ -7,6 +7,7 @@ import com.twitter.util.Await
 import org.jboss.netty.handler.codec.http.{ DefaultHttpRequest, HttpMethod, HttpVersion }
 import org.scalatest._
 import org.scalatest.Matchers
+import util.config
 
 class ApiSpec extends FlatSpec with Matchers {
 
@@ -23,8 +24,10 @@ class ApiSpec extends FlatSpec with Matchers {
   def GET(path: String): Request =
     request(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, path))
 
+  val context = s"/${config.getString("app.context")}"
+
   "API" should "allow GET on status route" in {
-    await(GET("/zdavep")).status shouldBe Status.Ok
+    await(GET(context)).status shouldBe Status.Ok
   }
 
   it should "return NotFound status for unknown route: /foo/bar" in {
