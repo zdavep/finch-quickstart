@@ -1,9 +1,7 @@
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.0")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.3")
 
-addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.7.0")
+addSbtPlugin("io.spray" % "sbt-revolver" % "0.8.0")
 
-addSbtPlugin("io.spray" % "sbt-revolver" % "0.7.2")
-
-addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.5.1")
+addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.6.0")
 
 ivyLoggingLevel := UpdateLogging.Quiet

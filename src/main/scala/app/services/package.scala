@@ -29,7 +29,7 @@ package object services {
     } else {
       inNewThread {
         val msg = maybeTitle.map(title => s"Hello, $title $name").getOrElse(s"Hello, $name")
-        (1 to n).map(i => Greeting.decorate(s"$msg: $i")).toSeq
+        (1 to n).map(i => Greeting.decorate(s"$msg: $i"))
       }
     }
 }

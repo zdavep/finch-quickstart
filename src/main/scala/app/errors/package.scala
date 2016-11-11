@@ -28,7 +28,7 @@ package object errors {
           )
           val rep = Response(Status.InternalServerError)
           rep.setContentTypeJson()
-          rep.write(data.toString())
+          rep.write(data.noSpaces)
           rep
       }
   }
