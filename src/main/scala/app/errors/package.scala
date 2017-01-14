@@ -23,8 +23,8 @@ package object errors {
       service(req).handle {
         case (t: Throwable) =>
           val data = Json.obj(
-            "type" -> Json.string(t.getClass.getSimpleName),
-            "error" -> Json.string(Option(t.getMessage).getOrElse("Internal Server Error"))
+            "type" -> Json.fromString(t.getClass.getSimpleName),
+            "error" -> Json.fromString(Option(t.getMessage).getOrElse("Internal Server Error"))
           )
           val rep = Response(Status.InternalServerError)
           rep.setContentTypeJson()

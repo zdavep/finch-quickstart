@@ -13,26 +13,16 @@ import com.typesafe.config.ConfigFactory
  */
 package object util {
 
-  // Dynamic config loader
-  private def _loadConfig = {
-    val _config = ConfigFactory.load()
-    if (!_config.getBoolean("app.conf.override")) _config else { // Allow overridden config from external file
-      ConfigFactory.parseFile(new java.io.File(_config.getString("app.conf.file")))
-    }
-  }
-
   /**
    * Application configuration object.
    */
-  final val config = _loadConfig
+  final val config = ConfigFactory.load()
 
   /**
    * A simple filter tha adds timeouts to service calls
    */
   def timeoutFilter(duration: Duration = 250.millis)(implicit timer: Timer): TimeoutFilter[Request, Response] =
     new TimeoutFilter(duration, new IndividualRequestTimeoutException(duration), timer)
-
-  //scalastyle:off
 
   /**
    * Rate limiter filter. Defaults to ~1000 req/sec.
@@ -46,5 +36,5 @@ package object util {
       }
       case _ => service(request)
     }
-  } //scalastyle:on
+  }
 }

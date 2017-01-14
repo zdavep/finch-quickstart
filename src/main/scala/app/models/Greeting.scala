@@ -16,7 +16,7 @@ object Greeting {
    * Provides an implicit JSON encoder for the Greeting model.
    */
   implicit val encodeJson: Encoder[Greeting] =
-    Encoder.instance(g => Json.obj("greeting" -> Json.string(g.message)))
+    Encoder.instance(g => Json.obj("greeting" -> Json.fromString(g.message)))
 
   /**
    * Create a new greeting instance.
