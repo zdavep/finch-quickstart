@@ -1,4 +1,4 @@
-package app
+package app.util
 
 import com.twitter.finagle.{ Service, SimpleFilter }
 import com.twitter.finagle.http.{ Request, Response, Status }

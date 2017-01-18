@@ -1,4 +1,4 @@
-package app
+package app.util
 
 import com.twitter.concurrent.NamedPoolThreadFactory
 import com.twitter.util.FuturePool

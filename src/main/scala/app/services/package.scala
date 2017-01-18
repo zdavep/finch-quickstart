@@ -1,8 +1,8 @@
 package app
 
-import concurrent.inNewThread
-import errors.illegalArgs
-import models.Greeting
+import app.models.Greeting
+import app.util.concurrent.inNewThread
+import app.util.errors.illegalArgs
 import com.twitter.util.Future
 
 /**

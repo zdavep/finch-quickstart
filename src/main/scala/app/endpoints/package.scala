@@ -1,16 +1,16 @@
 package app
 
-import models.Greeting
-import services._
+import app.models.Greeting
+import app.services._
+import app.util.config
 import io.circe.{ Json, Encoder }
 import io.finch._
 import io.finch.circe._
-import util.config
 
 /**
  * Greeting service routes.
  */
-package object routes {
+package object endpoints {
 
   // Logging
   private val log = org.slf4j.LoggerFactory.getLogger(getClass)
@@ -37,7 +37,7 @@ package object routes {
   private val statusEp = get(context)(Ok(health)) | head(context)(Ok(health))
 
   // Endpoints
-  private val endpoints = multiGreetingEp :+: greetingEp :+: greetingByNameEp :+: statusEp
+  private val combined = multiGreetingEp :+: greetingEp :+: greetingByNameEp :+: statusEp
 
   // Convert domain errors to JSON
   implicit val encodeException: Encoder[Exception] = Encoder.instance { e =>
@@ -50,7 +50,7 @@ package object routes {
   /**
    * Greeting API
    */
-  val greetingAPI = endpoints.handle {
+  val greetingAPI = combined.handle {
     case e: IllegalArgumentException =>
       log.error("Bad request from client", e)
       BadRequest(e)
