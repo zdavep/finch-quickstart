@@ -1,13 +1,13 @@
 name := "finch-quickstart"
-version := "0.11.1"
+version := "0.12.0"
 organization := "zdavep"
 scalaVersion := "2.11.8"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies ++= Seq(
-  "com.github.finagle" %% "finch-core" % "0.11.1" exclude("org.openjdk.jmh", "*"),
-  "com.github.finagle" %% "finch-circe" % "0.11.1" exclude("org.openjdk.jmh", "*"),
+  "com.github.finagle" %% "finch-core" % "0.12.0" exclude("org.openjdk.jmh", "*"),
+  "com.github.finagle" %% "finch-circe" % "0.12.0" exclude("org.openjdk.jmh", "*"),
   "com.typesafe" % "config" % "1.3.1",
   "org.slf4j" % "slf4j-api" % "1.7.21",
   "org.slf4j" % "slf4j-simple" % "1.7.21",
@@ -56,6 +56,6 @@ mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
 assemblyExcludedJars in assembly := {
   val cp = (fullClasspath in assembly).value
   cp filter { x =>
-    x.data.getName == "finagle-netty4_2.11-6.40.0.jar"
+    x.data.getName == "finagle-netty4_2.11-6.41.0.jar"
   }
 }
