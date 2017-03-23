@@ -20,7 +20,7 @@ Running
 
 To run:
 
-    $ java -jar target/scala-2.11/finch-quickstart-0.12.0.jar
+    $ java -jar target/scala-2.11/finch-quickstart-0.13.1.jar
 
 To run with sbt:
 
