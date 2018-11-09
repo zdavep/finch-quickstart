@@ -1,3 +1,10 @@
+Unmaintained
+======
+
+This repo is no longer actively maintained.  Please use the official Finch gitter8 template instead:
+
+https://github.com/finch/finch.g8
+
 Name
 ====
 
